@@ -41,7 +41,6 @@ public class ProductController {
     @PreAuthorize("hasRole('ROLE_VENDOR')")
     public ResponseEntity<ProductDto> createProduct(
             @RequestBody Product product) {
-             System.out.println ("coming create");
             ProductDto createdProduct = productService.createProduct(product);
             return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
     }
