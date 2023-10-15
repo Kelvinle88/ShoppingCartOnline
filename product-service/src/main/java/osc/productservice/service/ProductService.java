@@ -13,4 +13,6 @@ public interface ProductService {
     public ProductDto updateProductShipIn(Long productId);
     public ProductDto updateProductShipOut(Long productId);
     ProductDto getProductByProductId(Long productId);
+
+    List<ProductDto> getProductByVendorId (String vendorId);
 }

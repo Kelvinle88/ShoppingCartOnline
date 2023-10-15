@@ -21,18 +21,21 @@ public class AwesomeUserDetails implements UserDetails {
     private List<String> roles;
 
     public AwesomeUserDetails(Claims claims) {
-        this.id = claims.getSubject();
+        //this.id = claims.getSubject();
+        this.id = claims.get ("userId",String.class);
         this.email = claims.get("email", String.class);
-       // Map<String, Object> realmAccess = (Map <String, Object>) claims.get("realm_access");
-       // this.roles = ((List<String>)realmAccess.get("roles"));
+        //Map <String, Object> realmAccess = (Map <String, Object>) claims.get("realm_access");
+        //this.roles = ((List<String>)realmAccess.get("roles"));
+        this.roles = ((List<String>)claims.get("roles"));
         System.out.println(claims);
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        //return null;
         return roles.stream()
                 .map(Object::toString)
-                //.map(r -> "ROLE_" + r.toUpperCase())
+                .map(r -> "ROLE_" + r.toUpperCase())
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }

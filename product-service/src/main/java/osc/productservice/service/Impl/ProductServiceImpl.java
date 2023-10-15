@@ -35,10 +35,8 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public ProductDto updateProduct(Long productId,ProductDto productDto) {
-        // Find the product by vendorId and productId
         String vendorId = authHelper.getUserId ();
         Product product = productRepository.findByVendorIdAndProductId(vendorId, productId);
-
         // Check if the product exists
         if (product == null) {
             throw new RuntimeException("Product with Vendor Id: " + vendorId + " and Product Id: " + productId + " does not exist.");
@@ -76,7 +74,6 @@ public class ProductServiceImpl implements ProductService {
         if (product != null) {
             int totalShipInQuantity = shipInRepository.getTotalShipInQuantityForProduct(productId);
             int availableQuantity = product.getAvailableQuantity() + totalShipInQuantity;
-
             product.setAvailableQuantity(availableQuantity);
             productRepository.save(product);
         }
@@ -101,5 +98,13 @@ public class ProductServiceImpl implements ProductService {
     public ProductDto getProductByProductId (Long productId) {
         Product product = productRepository.findById(productId).orElse(null);
         return productMapper.toDto (product);
+    }
+
+    @Override
+    public List <ProductDto> getProductByVendorId (String vendorId) {
+        return productRepository.findByVendorId(vendorId)
+                .stream()
+                .map(p -> productMapper.toDto ((p)))
+                .toList();
     }
 }

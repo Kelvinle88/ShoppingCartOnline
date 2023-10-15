@@ -21,7 +21,7 @@ public class ShipIn {
     private int quantity;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "productId",name = "product_id")
+    @JoinColumn(name = "product_id")
     @JsonIgnore
     private Product product;
 }

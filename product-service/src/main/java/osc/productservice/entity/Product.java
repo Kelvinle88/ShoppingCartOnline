@@ -28,8 +28,8 @@ public class Product {
     private int availableQuantity;
 
     @OneToMany (mappedBy = "product",cascade = CascadeType.ALL)
-    private List <ShipOut> shipOut;
+    private List <ShipOut> shipOuts;
 
     @OneToMany (mappedBy = "product",cascade = CascadeType.ALL)
-    private List<ShipIn> shipIn;
+    private List<ShipIn> shipIns;
 }

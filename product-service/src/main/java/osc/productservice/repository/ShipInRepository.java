@@ -8,7 +8,7 @@ import osc.productservice.entity.ShipIn;
 
 @Repository
 public interface ShipInRepository extends JpaRepository <ShipIn, Long> {
-    @Query("SELECT SUM(si.quantity) FROM ShipIn si JOIN si.product p WHERE p.productId = :productId")
+    @Query("SELECT SUM(si.quantity) FROM ShipIn si  WHERE si.product.productId = :productId")
     int getTotalShipInQuantityForProduct(@Param("productId") Long productId);
 }
 

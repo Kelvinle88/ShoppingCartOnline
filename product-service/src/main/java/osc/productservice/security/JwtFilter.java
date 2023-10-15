@@ -24,12 +24,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
         final String authorizationHeader = request.getHeader("Authorization");
         String method = request.getMethod();
-
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             var token = authorizationHeader.substring(7);
-            //boolean isTokenValid = false;
-            boolean isTokenValid = true;
-           // isTokenValid = jwtHelper.validateToken(token);
+            boolean isTokenValid = false;
+            //boolean isTokenValid = true;
+            isTokenValid = jwtHelper.validateToken(token);
             var claims = jwtHelper.getUserIdFromToken(token);
             if (isTokenValid && SecurityContextHolder.getContext().getAuthentication() == null) {
                 var userDetails = new AwesomeUserDetails(claims);
@@ -44,6 +43,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+        System.out.println ("running");
     }
 
 }

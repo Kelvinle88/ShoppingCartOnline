@@ -8,6 +8,6 @@ import osc.productservice.entity.ShipOut;
 
 @Repository
 public interface ShipOutRepository extends JpaRepository <ShipOut, Long> {
-    @Query("SELECT SUM(so.quantity) FROM ShipOut so JOIN so.product p WHERE p.productId = :productId")
+    @Query("SELECT SUM(so.quantity) FROM ShipOut so WHERE so.product.productId = :productId")
     int getTotalShipOutQuantityForProduct(@Param("productId") Long productId);
 }
