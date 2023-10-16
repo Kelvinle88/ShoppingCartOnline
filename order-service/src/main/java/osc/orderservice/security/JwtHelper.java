@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -28,14 +30,25 @@ public class JwtHelper {
                 .compact();
     }
 
-    public String generateRefreshToken(String email) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        return Jwts.builder()
-                .setSubject(email)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration * 60))
-                .signWith(SignatureAlgorithm.HS512, this.getPublicKey())
-                .compact();
-    }
+//    public String generateRefreshToken(String email) throws NoSuchAlgorithmException, InvalidKeySpecException {
+//        return Jwts.builder()
+//                .setSubject(email)
+//                .setIssuedAt(new Date())
+//                .setExpiration(new Date(System.currentTimeMillis() + expiration * 60))
+//                .signWith(SignatureAlgorithm.HS512, this.getPublicKey())
+//                .compact();
+//    }
+public String generateRefreshToken(String email,String userId,List <String> roles) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    return Jwts.builder()
+            .claim("email", email)
+            .claim("userId", userId)
+            .claim ("roles",roles)
+            .setSubject(email)
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + expiration*60))
+            .signWith(SignatureAlgorithm.HS512, this.getPublicKey())
+            .compact();
+}
 
     public String getSubject(String token) throws NoSuchAlgorithmException, InvalidKeySpecException {
         return Jwts.parser()
@@ -83,5 +96,12 @@ public class JwtHelper {
 
     private String getPublicKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
         return SECRET_KEY;
+    }
+    public static void main (String[] args) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        List<String> roles = Arrays.asList("VENDOR", "ADMIN","CUSTOMER");
+        String email = "gad@gmail.com";
+        String userId = "001";
+        String token = new JwtHelper ().generateRefreshToken (email,userId,roles);
+        System.out.println (token);
     }
 }

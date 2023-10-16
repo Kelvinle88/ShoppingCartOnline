@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Data
@@ -21,11 +20,14 @@ public class AwesomeUserDetails implements UserDetails {
     private String password;
     private List<String> roles;
 
+    private String token;
+
     public AwesomeUserDetails(Claims claims) {
         this.id = claims.getSubject();
         this.email = claims.get("email", String.class);
-        Map<String, Object> realmAccess = (Map <String, Object>) claims.get("realm_access");
-        this.roles = ((List<String>)realmAccess.get("roles"));
+        //Map<String, Object> realmAccess = (Map <String, Object>) claims.get("realm_access");
+        //this.roles = ((List<String>)realmAccess.get("roles"));
+        this.roles = ((List<String>)claims.get("roles"));
         System.out.println(claims);
     }
 

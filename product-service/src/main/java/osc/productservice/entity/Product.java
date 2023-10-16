@@ -23,6 +23,8 @@ public class Product {
     private double productPrice;
     private int category;
     private String description;
+    @Lob
+    private String imageData;
     private String vendorId;
     private String status;
     private int availableQuantity;

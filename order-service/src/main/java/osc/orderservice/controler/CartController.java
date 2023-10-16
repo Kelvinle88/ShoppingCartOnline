@@ -9,6 +9,7 @@ import osc.orderservice.service.CartService;
 import java.util.List;
 //import javax.servlet.http.HttpServletRequest;
 @RestController
+@RequestMapping("/cart")
 public class CartController {
 
     @Autowired
@@ -17,7 +18,7 @@ public class CartController {
     @Autowired
     private HeaderGenerator headerGenerator;
 
-    @GetMapping (value = "/cart")
+    @GetMapping ()
     public ResponseEntity<List<Object>> getCart(@RequestHeader(value = "Cookie") String cartId){
         List<Object> cart = cartService.getCart(cartId);
         if(!cart.isEmpty()) {
@@ -31,11 +32,12 @@ public class CartController {
                 HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping(value = "/cart", params = {"productId", "quantity"})
+    @PostMapping(params = {"productId", "quantity"})
     public ResponseEntity<List<Object>> addItemToCart(
             @RequestParam("productId") Long productId,
             @RequestParam("quantity") Integer quantity,
             @RequestHeader(value = "Cookie") String cartId) {
+        System.out.println ("coming");
         List<Object> cart = cartService.getCart(cartId);
         if(cart != null) {
             if(cart.isEmpty()){
@@ -58,7 +60,7 @@ public class CartController {
                 HttpStatus.BAD_REQUEST);
     }
 
-    @DeleteMapping(value = "/cart", params = "productId")
+    @DeleteMapping(params = "productId")
     public ResponseEntity<Void> removeItemFromCart(
             @RequestParam("productId") Long productId,
             @RequestHeader(value = "Cookie") String cartId){

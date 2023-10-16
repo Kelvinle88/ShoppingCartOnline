@@ -105,8 +105,8 @@ public String generateToken(String email,String userId,List <String> roles) thro
     }
 
     public static void main (String[] args) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        List<String> roles = Arrays.asList("VENDOR", "ADMIN");
-        String email = "abc@gmail.com";
+        List<String> roles = Arrays.asList("VENDOR", "ADMIN","CUSTOMER");
+        String email = "gad@gmail.com";
         String userId = "001";
         String token = new JwtHelper ().generateRefreshToken (email,userId,roles);
         System.out.println (token);

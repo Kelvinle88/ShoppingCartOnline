@@ -17,13 +17,14 @@ import java.util.List;
 public class CartServiceImpl implements CartService {
     @Autowired
     private ProductFeignClient productClient;
+    @Autowired
     private ProductMapper productMapper;
 
     @Autowired
     private CartRedisRepository cartRedisRepository;
 
     @Override
-    public void addItemToCart(String cartId, Long productId, Integer quantity) {
+    public void addItemToCart(String cartId,Long productId,Integer quantity) {
         ProductDto productDto = productClient.getProductByProductId(productId);
         Product product = productMapper.toEntity (productDto);
         Item item = new Item(quantity,product, CartUtilities.getSubTotalForItem(product,quantity));

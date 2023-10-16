@@ -4,13 +4,14 @@ import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
-//@Table(name = "users")
+@Table(name = "users")
 public class User {
 
     @Id
@@ -23,5 +24,5 @@ public class User {
 
 //    @OneToMany (mappedBy = "user")
 //    @JsonIgnore
-//    private List<Order> orders;
+//    private List <Order> orders;
 }
