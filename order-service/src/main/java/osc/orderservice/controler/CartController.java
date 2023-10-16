@@ -37,7 +37,6 @@ public class CartController {
             @RequestParam("productId") Long productId,
             @RequestParam("quantity") Integer quantity,
             @RequestHeader(value = "Cookie") String cartId) {
-        System.out.println ("coming");
         List<Object> cart = cartService.getCart(cartId);
         if(cart != null) {
             if(cart.isEmpty()){

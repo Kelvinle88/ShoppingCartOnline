@@ -3,6 +3,7 @@ package osc.productservice.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class Product {
     private String productType;
     private Date dateAdded;
     private String productName;
-    private double productPrice;
+    private BigDecimal productPrice;
     private int category;
     private String description;
     @Lob

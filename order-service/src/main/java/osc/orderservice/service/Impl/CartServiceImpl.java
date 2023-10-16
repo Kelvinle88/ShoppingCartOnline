@@ -48,7 +48,6 @@ public class CartServiceImpl implements CartService {
             }
         }
     }
-
     @Override
     public void deleteItemFromCart(String cartId, Long productId) {
         List<Item> cart = (List) cartRedisRepository.getCart(cartId, Item.class);
@@ -58,7 +57,6 @@ public class CartServiceImpl implements CartService {
             }
         }
     }
-
     @Override
     public boolean checkIfItemIsExist(String cartId, Long productId) {
         List<Item> cart = (List) cartRedisRepository.getCart(cartId, Item.class);

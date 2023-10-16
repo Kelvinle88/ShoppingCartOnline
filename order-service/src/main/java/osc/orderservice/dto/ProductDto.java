@@ -1,6 +1,7 @@
 package osc.orderservice.dto;
 
 //import jakarta.persistence.Entity;
+
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -12,7 +13,10 @@ import java.math.BigDecimal;
 @Builder
 @Data
 public class ProductDto {
-    private Long id;
+    private Long productId;
     private String productName;
     private BigDecimal productPrice;
+//    private Long id;
+//    private String productName;
+//    private BigDecimal productPrice;
 }

@@ -29,4 +29,7 @@ public class AuthHelper {
     public boolean isAdmin() {
         return getUserDetails().isAdmin();
     }
+    public String getToken() {
+        return getUserDetails ().getToken ();
+    }
 }

@@ -19,7 +19,7 @@ public class AwesomeUserDetails implements UserDetails {
     @JsonIgnore
     private String password;
     private List<String> roles;
-
+    private String token;
     public AwesomeUserDetails(Claims claims) {
         //this.id = claims.getSubject();
         this.id = claims.get ("userId",String.class);

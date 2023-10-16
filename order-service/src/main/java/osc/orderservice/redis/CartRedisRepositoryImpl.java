@@ -1,10 +1,12 @@
 package osc.orderservice.redis;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Repository;
 import redis.clients.jedis.Jedis;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,6 +15,7 @@ import java.util.Collection;
 public class CartRedisRepositoryImpl implements CartRedisRepository{
     private ObjectMapper objectMapper = new ObjectMapper();
     private Jedis jedis = new Jedis();
+
 
     @Override
     public void addItemToCart(String key, Object item) {
@@ -56,4 +59,5 @@ public class CartRedisRepositoryImpl implements CartRedisRepository{
     public void deleteCart(String key) {
         jedis.del(key);
     }
+
 }
