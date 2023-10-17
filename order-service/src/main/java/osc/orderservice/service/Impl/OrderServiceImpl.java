@@ -31,9 +31,6 @@ public class OrderServiceImpl implements OrderService {
                         Item.getQuantity(),
                         Integer::sum
                         ));
-//                .forEach (Item -> map.put (Item.getProduct ().getId (),
-//                        map.getOrDefault (Item.getProduct ().getId (), 0) + 1));
-
         for (Map.Entry<Long, Integer> entry : map.entrySet()) {
             Long productId = entry.getKey();
             Integer quantity = entry.getValue();

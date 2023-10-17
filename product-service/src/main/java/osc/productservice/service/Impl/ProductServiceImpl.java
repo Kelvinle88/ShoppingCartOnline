@@ -83,25 +83,15 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public List<ProductDto> updateProductShipOut(List<ProductDto> productDtos) {
-        List<Product> productList = productMapper.toEntities (productDtos);
-        for(Product product: productList){
-            Product exist = productRepository.findById (product.getProductId ()).orElse (null);
-            int avalaibleQuantity = exist.getAvailableQuantity () - product.getAvailableQuantity ();
+        //List<Product> productList = productMapper.toEntities (productDtos);
+        for(ProductDto productDto: productDtos){
+            Product exist = productRepository.findById (productDto.getProductId ()).orElse (null);
+            int avalaibleQuantity = exist.getAvailableQuantity () - productDto.getQuantity ();
             exist.setAvailableQuantity (avalaibleQuantity);
             productRepository.save (exist);
         }
-        //System.out.println ("ProductDtos:"+productDtos.stream().toList ());
-//
-//        Product product = productRepository.findById(productId).orElse(null);
-//        if (product != null) {
-//            int totalShipOutQuantity = shipOutRepository.getTotalShipOutQuantityForProduct(productId);
-//            int availableQuantity = product.getAvailableQuantity() - quantity;//totalShipOutQuantity;
-//            product.setAvailableQuantity(availableQuantity);
-//            productRepository.save(product);
-//        }
-//
-//        return productMapper.toDto (product);
-        return productMapper.toDtos (productList);
+        return productDtos;
+
     }
 
     @Override
