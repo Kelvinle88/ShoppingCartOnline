@@ -1,14 +1,14 @@
 package osc.productservice.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class ProductDto {
     private Long productId;
     private String productType;
@@ -16,4 +16,6 @@ public class ProductDto {
     private BigDecimal productPrice;
     private int category;
     private String description;
+    private int quantity;
+
 }

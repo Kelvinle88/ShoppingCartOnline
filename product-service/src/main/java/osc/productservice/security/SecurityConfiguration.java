@@ -3,6 +3,7 @@ package osc.productservice.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -39,13 +40,13 @@ private final JwtFilter jwtFilter;
                 .and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers ("/products/**").permitAll ()
-               // .antMatchers (HttpMethod.GET,"/products/**").permitAll()
-               // .antMatchers (HttpMethod.GET,"/products/vendor/{vendorId}").hasAnyRole ("VENDOR")
-               // .antMatchers (HttpMethod.POST,"/products/**").permitAll()
-               // .antMatchers(HttpMethod.POST,"/products/**").hasAnyRole("ADMIN", "VENDOR")
-               // .antMatchers(HttpMethod.PUT,"/products/**").hasAnyRole("ADMIN", "VENDOR")
-               // .antMatchers(HttpMethod.DELETE,"/products/**").hasAnyRole("ADMIN", "VENDOR")
+                //.antMatchers ("/products/**").permitAll ()
+                .antMatchers (HttpMethod.GET,"/products/**").permitAll()
+                //.antMatchers (HttpMethod.GET,"/products/vendor/{vendorId}").hasAnyRole ("VENDOR")
+                //.antMatchers (HttpMethod.POST,"/products/**").permitAll()
+                .antMatchers(HttpMethod.POST,"/products/**").hasAnyRole("ADMIN", "VENDOR")
+                .antMatchers(HttpMethod.PUT,"/products/**").hasAnyRole("ADMIN", "VENDOR")
+                .antMatchers(HttpMethod.DELETE,"/products/**").hasAnyRole("ADMIN", "VENDOR")
                 .anyRequest()
                 .authenticated()
                 .and()

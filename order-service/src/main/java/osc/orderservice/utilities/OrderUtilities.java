@@ -13,4 +13,12 @@ public class OrderUtilities {
         }
         return total;
     }
+    public static int countTotalQuantity(List <Item> cart){
+        int total = 0;
+        for(int i = 0; i < cart.size(); i++){
+            total +=cart.get (i).getQuantity ();
+            //total = total.add(cart.get(i).getSubTotal());
+        }
+        return total;
+    }
 }

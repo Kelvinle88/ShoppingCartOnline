@@ -28,6 +28,7 @@ public class HeaderGenerator {
 //        httpHeaders.add("Content-Type", "application/json; charset=UTF-8");
 //        return httpHeaders;
 //    }
+
     public HttpHeaders getHeadersForSuccessPostMethod(Long newResourceId) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(ServletUriComponentsBuilder

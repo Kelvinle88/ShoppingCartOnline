@@ -32,6 +32,9 @@ public class Product {
     @NotNull
     private BigDecimal productPrice;
 
+    @Column
+    private int quantity;
+
     @OneToMany (mappedBy = "product", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Item> items;

@@ -16,14 +16,13 @@ public class AuthHelper {
     }
 
     public AwesomeUserDetails getUserDetails() {
-        System.out.println (getAuthentication().getPrincipal().toString ());
         return (AwesomeUserDetails) getAuthentication().getPrincipal();
     }
 
     public String getUserId() {
-        String result = getUserDetails().getId();
-        return result;
-        //return getUserDetails().getId();
+        //String result = getUserDetails().getId();
+        //return result;
+        return getUserDetails().getId();
     }
 
     public boolean isAdmin() {

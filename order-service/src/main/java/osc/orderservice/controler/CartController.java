@@ -64,7 +64,7 @@ public class CartController {
             @RequestParam("productId") Long productId,
             @RequestHeader(value = "Cookie") String cartId){
         List<Object> cart = cartService.getCart(cartId);
-        if(cart != null) {
+        if(!cart.isEmpty ()) {
             cartService.deleteItemFromCart(cartId, productId);
             return new ResponseEntity<Void>(
                     headerGenerator.getHeadersForSuccessGetMethod(),

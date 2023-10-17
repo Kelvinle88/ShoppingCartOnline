@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import osc.orderservice.client.ProductFeignClient;
 import osc.orderservice.entity.Item;
 import osc.orderservice.entity.Order;
-import osc.orderservice.entity.Product;
 import osc.orderservice.headergenerator.HeaderGenerator;
 import osc.orderservice.mapper.UserMapper;
 import osc.orderservice.security.AuthHelper;
@@ -36,11 +35,12 @@ public class OrderController {
     @Autowired
     private HeaderGenerator headerGenerator;
 
+    @Autowired
     private ProductFeignClient productFeignClient;
 
     private UserMapper userMapper;
 
-    private final AuthHelper authHelper;
+    private AuthHelper authHelper;
 
     public OrderController (AuthHelper authHelper) {
         this.authHelper = authHelper;
@@ -57,9 +57,7 @@ public class OrderController {
             Order order = this.createOrder(cart, userId);
             try{
                 orderService.saveOrder(order);
-                order.getItems ().stream ().map (Item::getProduct)
-                        .map (Product::getId)
-                        .forEach (productFeignClient::updateProductShipOut);
+                productFeignClient.updateProductShipOut (orderService.getProductsFromOrder(order));
                 cartService.deleteCart(cartId);
                 return new ResponseEntity<Order>(
                         order,
@@ -83,6 +81,7 @@ public class OrderController {
         order.setItems(cart);
         order.setUserId (userId);
         order.setTotal(OrderUtilities.countTotalPrice(cart));
+        order.setTotalQuantity (OrderUtilities.countTotalQuantity (cart));
         order.setOrderedDate(LocalDate.now());
         order.setStatus("PAYMENT_EXPECTED");
         return order;

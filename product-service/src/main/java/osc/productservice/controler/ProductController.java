@@ -67,10 +67,10 @@ public class ProductController {
         ProductDto updatedProductQuantity = productService.updateProductShipIn (productId);
         return new ResponseEntity<> (updatedProductQuantity,HttpStatus.OK);
     }
-    @PostMapping("/{productId}/order")
-    @PreAuthorize("hasRole('ROLE_CUSTOMER')")
-    public ResponseEntity<ProductDto> updateProductShipOut(@PathVariable Long productId){
-        ProductDto updatedProductQuantity = productService.updateProductShipOut (productId);
+    @PostMapping("/update")
+   // @PreAuthorize("hasRole('ROLE_CUSTOMER')")
+    public ResponseEntity<List<ProductDto>> updateProductShipOut(@RequestBody List<ProductDto> productDtos){
+        List<ProductDto> updatedProductQuantity = productService.updateProductShipOut (productDtos);
         return new ResponseEntity<> (updatedProductQuantity,HttpStatus.OK);
     }
 }

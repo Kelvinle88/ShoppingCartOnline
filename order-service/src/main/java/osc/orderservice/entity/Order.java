@@ -31,6 +31,9 @@ public class Order {
     @Column (name = "total")
     private BigDecimal total;
 
+    @Column (name = "totalQuantity")
+    private int totalQuantity;
+
     @Column(name = "user_id")
     private String userId;
     @ManyToMany (cascade = CascadeType.ALL)
