@@ -61,10 +61,10 @@ public class ProductController {
             productService.deleteProduct(productId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-    @PostMapping("/{productId}/shipping")
+    @PostMapping("/{productId}/shipin")
     @PreAuthorize("hasRole('ROLE_VENDOR') ")
-    public ResponseEntity<ProductDto> updateProductShipIn(@PathVariable Long productId){
-        ProductDto updatedProductQuantity = productService.updateProductShipIn (productId);
+    public ResponseEntity<ProductDto> updateProductShipIn(@PathVariable Long productId,@RequestParam int quantity){
+        ProductDto updatedProductQuantity = productService.updateProductShipIn (productId,quantity);
         return new ResponseEntity<> (updatedProductQuantity,HttpStatus.OK);
     }
     @PostMapping("/update")

@@ -10,7 +10,7 @@ public interface ProductService {
     ProductDto updateProduct(Long productId,ProductDto productDto);
     void deleteProduct(Long id);
     List <ProductDto> findAll ();
-    public ProductDto updateProductShipIn(Long productId);
+    public ProductDto updateProductShipIn(Long productId,int quantity);
     public List<ProductDto> updateProductShipOut(List<ProductDto> productDtos);
     ProductDto getProductByProductId(Long productId);
 

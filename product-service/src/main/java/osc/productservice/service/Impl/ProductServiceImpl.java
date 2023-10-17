@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import osc.productservice.dto.ProductDto;
 import osc.productservice.emun.ProductStatus;
 import osc.productservice.entity.Product;
+import osc.productservice.entity.ShipIn;
+import osc.productservice.entity.ShipOut;
 import osc.productservice.mapper.ProductMapper;
 import osc.productservice.repository.ProductRepository;
 import osc.productservice.repository.ShipInRepository;
@@ -12,7 +14,9 @@ import osc.productservice.repository.ShipOutRepository;
 import osc.productservice.security.AuthHelper;
 import osc.productservice.service.ProductService;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -69,13 +73,18 @@ public class ProductServiceImpl implements ProductService {
     }
     @Transactional
     @Override
-    public ProductDto updateProductShipIn(Long productId) {
-        Product product = productRepository.findById(productId).orElse(null);
+    public ProductDto updateProductShipIn(Long productId,int quantity) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException ("Product not found"));
         if (product != null) {
-            int totalShipInQuantity = shipInRepository.getTotalShipInQuantityForProduct(productId);
-            int availableQuantity = product.getAvailableQuantity() + totalShipInQuantity;
+            int availableQuantity = product.getAvailableQuantity() + quantity;
             product.setAvailableQuantity(availableQuantity);
             productRepository.save(product);
+            ShipIn shipIn = new ShipIn ();
+            shipIn.setProduct (product);
+            shipIn.setQuantity (quantity);
+            shipIn.setShipmentDate (LocalDateTime.now ());
+            shipInRepository.save (shipIn);
         }
 
         return productMapper.toDto (product);
@@ -88,6 +97,11 @@ public class ProductServiceImpl implements ProductService {
             Product exist = productRepository.findById (productDto.getProductId ()).orElse (null);
             int avalaibleQuantity = exist.getAvailableQuantity () - productDto.getQuantity ();
             exist.setAvailableQuantity (avalaibleQuantity);
+            ShipOut shipOut = new ShipOut ();
+            shipOut.setProduct (exist);
+            shipOut.setQuantity (productDto.getQuantity ());
+            shipOut.setShipmentDate (LocalDateTime.now ());
+            shipOutRepository.save (shipOut);
             productRepository.save (exist);
         }
         return productDtos;

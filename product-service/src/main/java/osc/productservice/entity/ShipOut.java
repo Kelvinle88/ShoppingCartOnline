@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,7 +16,7 @@ public class ShipOut {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long shipOutId;
-    private Date shipmentDate;
+    private LocalDateTime shipmentDate;
     private int quantity;
 
     @ManyToOne
