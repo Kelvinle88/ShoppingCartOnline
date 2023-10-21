@@ -41,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
         order.getItems ()
                 .stream ()
                 .filter(Objects::nonNull)
-                .forEach (Item ->map.merge (Item.getProduct().getId(),
+                .forEach (Item ->map.merge (Item.getProduct ().getProductId (),//Item.getProduct().getId(),
                         Item.getQuantity(),
                         Integer::sum
                         ));

@@ -29,7 +29,8 @@ public class Item {
     @NotNull
     private BigDecimal subTotal;
 
-    @ManyToOne (cascade = CascadeType.ALL)
+//    @ManyToOne (cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn (name = "product_id")
     private Product product;
 

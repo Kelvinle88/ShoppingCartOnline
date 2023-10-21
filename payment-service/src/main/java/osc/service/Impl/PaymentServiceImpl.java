@@ -26,7 +26,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     private PaymentPublisher paymentPublisher;
     @Override
-    public String CheckOut(OrderDto orderDTO) throws StripeException {
+    public String checkOut(OrderDto orderDTO) throws StripeException {
         Stripe.apiKey = STRIPE_API_KEY;
         // Start by finding existing customer or creating a new one if needed
         Customer customer = CustomerUtil.findOrCreateCustomer(orderDTO.getUserId());
@@ -45,29 +45,27 @@ public class PaymentServiceImpl implements PaymentService {
         try {
             PaymentIntent paymentIntent = PaymentIntent.create(params);
             // Update the payment and order status based on the payment result
-           // Payment payment = paymentRepository.findByOrderId(orderDTO.getId());
-
-            //if (payment == null) {
-                Payment newPayment = new Payment();
-                newPayment.setPaymentId(paymentIntent.getId());
-                newPayment.setOrderId(orderDTO.getId());
-                //newPayment.setStatus (PaymentStatus.PENDING);
+           Payment payment = paymentRepository.findByOrderId(orderDTO.getId());
+            if (payment == null) {
+                payment = new Payment ();
+                payment.setPaymentId(paymentIntent.getId());
+                payment.setOrderId(orderDTO.getId());
+                payment.setStatus (PaymentStatus.PENDING);
                 // Save the new payment entity
-                //paymentRepository.save(newPayment);
-           // } else {
+                paymentRepository.save(payment);
+            } else {
                 //paymentIntent.setStatus ("succeeded");
-                paymentIntent.setStatus ("succeeded");
                 if ("succeeded".equals(paymentIntent.getStatus())) {
-                    newPayment.setStatus(PaymentStatus.CONFIRMED);
-                    paymentRepository.save(newPayment);
+                    payment.setStatus(PaymentStatus.CONFIRMED);
+                    paymentRepository.save(payment);
                     orderDTO.setOrderStatus(OrderStatus.CONFIRMED);
                     orderDTO.setPaymentStatus (PaymentStatus.CONFIRMED);
                 } else {
-                    newPayment.setStatus(PaymentStatus.REJECTED);
-                    paymentRepository.save(newPayment);
+                    payment.setStatus(PaymentStatus.REJECTED);
+                    paymentRepository.save(payment);
                     orderDTO.setOrderStatus(OrderStatus.PROCESSING);
                     orderDTO.setPaymentStatus (PaymentStatus.REJECTED);
-               // }
+               }
             }
             paymentPublisher.updateOrderPayment (orderDTO);
             return paymentIntent.getStatus ();

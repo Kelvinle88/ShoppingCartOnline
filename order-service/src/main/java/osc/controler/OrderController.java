@@ -55,7 +55,6 @@ public class OrderController {
     @PostMapping()
     public ResponseEntity <OrderDto> checkOut(
             @RequestHeader(value = "Cookie") String cartId)
-            //HttpServletRequest request)
     {
         String userId = authHelper.getUserId ();
         List <Item> cart = cartService.getAllItemsFromCart(cartId);
@@ -64,19 +63,13 @@ public class OrderController {
             try{
                 orderService.saveOrder(order);
                 cartService.deleteCart(cartId);
-                //orderPublisher.placeOrderMessage (new OrderDto (order.getId (),order.getUserId (),order.getTotal (),OrderStatus.PROCESSING));
                 OrderDto orderDto = orderMapper.toDto (order);
                 CompletableFuture <OrderDto> orderFuture =  orderService.requestPaymentOrder (orderDto);
                 return orderFuture.thenApplyAsync(dto -> new ResponseEntity<>(
                         dto,
-                        //headerGenerator.getHeadersForSuccessPostMethod(dto.getId()),
                         HttpStatus.CREATED
                 )).join();
 
-//                return new ResponseEntity<OrderDto>(
-//                        orderDto,
-//                        headerGenerator.getHeadersForSuccessPostMethod(orderDto.getId()),
-//                        HttpStatus.CREATED);
             }catch (Exception ex){
                 ex.printStackTrace();
                 return new ResponseEntity<OrderDto>(
@@ -88,8 +81,6 @@ public class OrderController {
                 headerGenerator.getHeadersForError(),
                 HttpStatus.NOT_FOUND);
     }
-
-
 }
 
 

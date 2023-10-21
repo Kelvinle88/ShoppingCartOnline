@@ -6,6 +6,7 @@ import osc.client.ProductFeignClient;
 import osc.dto.ProductDto;
 import osc.entity.Item;
 import osc.entity.Product;
+import osc.mapper.ItemMapper;
 import osc.mapper.ProductMapper;
 import osc.redis.CartRedisRepository;
 import osc.service.CartService;
@@ -19,6 +20,8 @@ public class CartServiceImpl implements CartService {
     private ProductFeignClient productClient;
     @Autowired
     private ProductMapper productMapper;
+    @Autowired
+    private ItemMapper itemMapper;
 
     @Autowired
     private CartRedisRepository cartRedisRepository;
@@ -28,6 +31,7 @@ public class CartServiceImpl implements CartService {
         ProductDto productDto = productClient.getProductByProductId(productId);
         Product product = productMapper.toEntity (productDto);
         Item item = new Item(quantity,product, CartUtilities.getSubTotalForItem(product,quantity));
+        //ItemDto itemDto = itemMapper.toDto (item);
         cartRedisRepository.addItemToCart(cartId, item);
     }
 
@@ -40,8 +44,8 @@ public class CartServiceImpl implements CartService {
     public void changeItemQuantity(String cartId, Long productId, Integer quantity) {
         List<Item> cart = (List)cartRedisRepository.getCart(cartId, Item.class);
         for(Item item : cart){
-            if((item.getProduct().getId()).equals(productId)){
-           // if((item.getProduct().getProductId ()).equals(productId)){
+            //if((item.getProduct().getId()).equals(productId)){
+            if((item.getProduct().getProductId ()).equals(productId)){
                 cartRedisRepository.deleteItemFromCart(cartId, item);
                 item.setQuantity(quantity);
                 item.setSubTotal(CartUtilities.getSubTotalForItem(item.getProduct(),quantity));
@@ -53,8 +57,8 @@ public class CartServiceImpl implements CartService {
     public void deleteItemFromCart(String cartId, Long productId) {
         List<Item> cart = (List) cartRedisRepository.getCart(cartId, Item.class);
         for(Item item : cart){
-            if((item.getProduct().getId()).equals(productId)){
-            //if((item.getProduct().getProductId ()).equals(productId)){
+           // if((item.getProduct().getId()).equals(productId)){
+            if((item.getProduct().getProductId ()).equals(productId)){
                 cartRedisRepository.deleteItemFromCart(cartId, item);
             }
         }
@@ -63,8 +67,8 @@ public class CartServiceImpl implements CartService {
     public boolean checkIfItemIsExist(String cartId, Long productId) {
         List<Item> cart = (List) cartRedisRepository.getCart(cartId, Item.class);
         for(Item item : cart){
-            if((item.getProduct().getId()).equals(productId)){
-            //if((item.getProduct().getProductId ()).equals(productId)){
+            //if((item.getProduct().getId()).equals(productId)){
+            if((item.getProduct().getProductId ()).equals(productId)){
                 return true;
             }
         }
@@ -73,6 +77,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public List<Item> getAllItemsFromCart(String cartId) {
+        //List<Item> items = (List)cartRedisRepository.getCart(cartId, Item.class);
         List<Item> items = (List)cartRedisRepository.getCart(cartId, Item.class);
         return items;
     }

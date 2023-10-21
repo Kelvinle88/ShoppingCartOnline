@@ -19,6 +19,6 @@ public class PaymentConsumerImpl implements PaymentConsumer {
             groupId = "pm")
     @Override
     public void receiveMessageFromOrder (OrderDto orderDto) throws StripeException {
-        paymentService.CheckOut (orderDto);
+        paymentService.checkOut (orderDto);
     }
 }
