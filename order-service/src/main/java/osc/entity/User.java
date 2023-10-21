@@ -21,8 +21,4 @@ public class User {
     @Column (name = "user_name")
     @NotNull
     private String userName;
-
-//    @OneToMany (mappedBy = "user")
-//    @JsonIgnore
-//    private List <Order> orders;
 }

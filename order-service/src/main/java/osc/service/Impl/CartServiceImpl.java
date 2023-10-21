@@ -40,8 +40,8 @@ public class CartServiceImpl implements CartService {
     public void changeItemQuantity(String cartId, Long productId, Integer quantity) {
         List<Item> cart = (List)cartRedisRepository.getCart(cartId, Item.class);
         for(Item item : cart){
-            //if((item.getProduct().getId()).equals(productId)){
-            if((item.getProduct().getProductId ()).equals(productId)){
+            if((item.getProduct().getId()).equals(productId)){
+           // if((item.getProduct().getProductId ()).equals(productId)){
                 cartRedisRepository.deleteItemFromCart(cartId, item);
                 item.setQuantity(quantity);
                 item.setSubTotal(CartUtilities.getSubTotalForItem(item.getProduct(),quantity));
@@ -53,8 +53,8 @@ public class CartServiceImpl implements CartService {
     public void deleteItemFromCart(String cartId, Long productId) {
         List<Item> cart = (List) cartRedisRepository.getCart(cartId, Item.class);
         for(Item item : cart){
-           // if((item.getProduct().getId()).equals(productId)){
-            if((item.getProduct().getProductId ()).equals(productId)){
+            if((item.getProduct().getId()).equals(productId)){
+            //if((item.getProduct().getProductId ()).equals(productId)){
                 cartRedisRepository.deleteItemFromCart(cartId, item);
             }
         }
@@ -63,8 +63,8 @@ public class CartServiceImpl implements CartService {
     public boolean checkIfItemIsExist(String cartId, Long productId) {
         List<Item> cart = (List) cartRedisRepository.getCart(cartId, Item.class);
         for(Item item : cart){
-           // if((item.getProduct().getId()).equals(productId)){
-            if((item.getProduct().getProductId ()).equals(productId)){
+            if((item.getProduct().getId()).equals(productId)){
+            //if((item.getProduct().getProductId ()).equals(productId)){
                 return true;
             }
         }

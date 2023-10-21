@@ -19,6 +19,6 @@ public class OrderConsumerImpl implements OrderConsumer {
             groupId = "pm")
     @Override
     public void receiveMessageFromPayment (OrderDto orderDto) {
-        orderService.updateOrderStatus(orderDto.getId (), orderDto.getStatus ());
+        orderService.updateOrderStatus(orderDto.getId (), orderDto.getOrderStatus (),orderDto.getPaymentStatus ());
         }
 }

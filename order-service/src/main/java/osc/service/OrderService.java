@@ -1,15 +1,20 @@
 package osc.service;
 
 import osc.constant.OrderStatus;
+import osc.constant.PaymentStatus;
+import osc.dto.OrderDto;
 import osc.dto.ProductDto;
+import osc.entity.Item;
 import osc.entity.Order;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface OrderService {
     public Order saveOrder(Order order);
     public List <ProductDto> getProductsFromOrder(Order order);
 
-    public void updateOrderStatus (Long id,OrderStatus status);
-    public Order getOrder(Long id);
+    public OrderDto updateOrderStatus (Long id,OrderStatus orderStatus,PaymentStatus paymentStatus);
+    public Order createOrder(List<Item> cart,String userId);
+    public CompletableFuture<OrderDto> requestPaymentOrder(OrderDto orderDto);
 }

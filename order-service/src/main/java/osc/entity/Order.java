@@ -3,6 +3,7 @@ package osc.entity;
 import com.sun.istack.NotNull;
 import lombok.*;
 import osc.constant.OrderStatus;
+import osc.constant.PaymentStatus;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -25,10 +26,15 @@ public class Order {
     @NotNull
     private LocalDate orderedDate;
 
-    @Column(name = "status")
+    @Column(name = "order_status")
     @NotNull
     @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+    private OrderStatus orderStatus;
+
+    @Column(name = "payment_status")
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
 
     @Column (name = "total")
     private BigDecimal total;
@@ -42,7 +48,4 @@ public class Order {
     @JoinTable (name = "cart" , joinColumns = @JoinColumn(name = "order_id"), inverseJoinColumns = @JoinColumn (name = "item_id"))
     private List<Item> items;
 
-//    @ManyToOne (cascade = CascadeType.ALL)
-//    @JoinColumn (name = "user_id")
-//    private User user;
 }

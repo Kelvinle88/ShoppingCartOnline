@@ -1,17 +1,24 @@
 package osc.service.Impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import osc.constant.OrderStatus;
+import osc.constant.PaymentStatus;
+import osc.dto.OrderDto;
 import osc.dto.ProductDto;
+import osc.entity.Item;
 import osc.entity.Order;
 import osc.mapper.OrderMapper;
 import osc.publisher.OrderPublisher;
 import osc.repository.OrderRepository;
 import osc.service.OrderService;
+import osc.utilities.OrderUtilities;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Transactional
@@ -34,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
         order.getItems ()
                 .stream ()
                 .filter(Objects::nonNull)
-                .forEach (Item ->map.merge (Item.getProduct ().getProductId (),//Item.getProduct().getId(),
+                .forEach (Item ->map.merge (Item.getProduct().getId(),
                         Item.getQuantity(),
                         Integer::sum
                         ));
@@ -50,19 +57,36 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void updateOrderStatus (Long id,OrderStatus status) {
+    public OrderDto updateOrderStatus (Long id,OrderStatus orderStatus,PaymentStatus paymentStatus) {
         Order order = orderRepository.findById (id).orElse (null);
-        order.setStatus (status);
+        order.setOrderStatus (orderStatus);
+        order.setPaymentStatus (paymentStatus);
         orderRepository.save (order);
-        if(status.equals (OrderStatus.CONFIRMED)){
+        if(orderStatus.equals (OrderStatus.CONFIRMED) && paymentStatus.equals (PaymentStatus.CONFIRMED)){
             orderPublisher.updateProductShipOut (getProductsFromOrder (order));
         }
-        //return orderMapper.toDto (order);
+        return orderMapper.toDto (order);
+    }
+    @Override
+    public Order createOrder(List<Item> cart, String userId) {
+        Order order = new Order();
+        order.setItems(cart);
+        order.setUserId (userId);
+        order.setTotal(OrderUtilities.countTotalPrice(cart));
+        order.setTotalQuantity (OrderUtilities.countTotalQuantity (cart));
+        order.setOrderedDate(LocalDate.now());
+        order.setOrderStatus(OrderStatus.PROCESSING);
+        order.setPaymentStatus (PaymentStatus.PENDING);
+        return order;
     }
 
     @Override
-    public Order getOrder(Long id){
-        return orderRepository.findById (id).orElse (null);
+    @Async
+    public CompletableFuture<OrderDto> requestPaymentOrder (OrderDto orderDto) {
+        orderPublisher.placeOrderMessage (orderDto);
+        return CompletableFuture.completedFuture(orderDto);
+
     }
+
 
 }

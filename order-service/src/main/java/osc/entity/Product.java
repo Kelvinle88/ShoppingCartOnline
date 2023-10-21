@@ -17,12 +17,12 @@ import java.util.List;
 public class Product {
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
-    //@JsonIgnore
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Long productId;
 
-    //@Transient
-    //private Long id;
+    @Transient
+    private Long id;
 
     @Column (name = "product_name")
     @NotNull

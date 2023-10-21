@@ -26,7 +26,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     private PaymentPublisher paymentPublisher;
     @Override
-    public void CheckOut(OrderDto orderDTO) throws StripeException {
+    public String CheckOut(OrderDto orderDTO) throws StripeException {
         Stripe.apiKey = STRIPE_API_KEY;
         // Start by finding existing customer or creating a new one if needed
         Customer customer = CustomerUtil.findOrCreateCustomer(orderDTO.getUserId());
@@ -55,19 +55,22 @@ public class PaymentServiceImpl implements PaymentService {
                 // Save the new payment entity
                 //paymentRepository.save(newPayment);
            // } else {
+                //paymentIntent.setStatus ("succeeded");
                 paymentIntent.setStatus ("succeeded");
                 if ("succeeded".equals(paymentIntent.getStatus())) {
                     newPayment.setStatus(PaymentStatus.CONFIRMED);
                     paymentRepository.save(newPayment);
-                    orderDTO.setStatus(OrderStatus.CONFIRMED);
+                    orderDTO.setOrderStatus(OrderStatus.CONFIRMED);
+                    orderDTO.setPaymentStatus (PaymentStatus.CONFIRMED);
                 } else {
                     newPayment.setStatus(PaymentStatus.REJECTED);
                     paymentRepository.save(newPayment);
-                    orderDTO.setStatus(OrderStatus.PROCESSING);
+                    orderDTO.setOrderStatus(OrderStatus.PROCESSING);
+                    orderDTO.setPaymentStatus (PaymentStatus.REJECTED);
                // }
             }
             paymentPublisher.updateOrderPayment (orderDTO);
-            //return paymentIntent.getStatus ();
+            return paymentIntent.getStatus ();
         } catch (StripeException e) {
             throw e;
         }
