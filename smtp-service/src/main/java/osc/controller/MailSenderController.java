@@ -15,6 +15,6 @@ public class MailSenderController {
     private MailSenderService mailSenderService;
     @PostMapping("/send")
     public void sendNewEmail(@RequestBody Email email){
-        mailSenderService.sendNewMail (email);
+        //mailSenderService.send (email);
     }
 }
