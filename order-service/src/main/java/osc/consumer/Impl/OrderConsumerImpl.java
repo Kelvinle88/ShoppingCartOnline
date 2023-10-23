@@ -3,8 +3,10 @@ package osc.consumer.Impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+import osc.constant.PaymentStatus;
 import osc.consumer.OrderConsumer;
 import osc.dto.OrderDto;
+import osc.events.PaymentEvent;
 import osc.service.OrderService;
 
 @Service
@@ -14,11 +16,21 @@ public class OrderConsumerImpl implements OrderConsumer {
 
 
     @KafkaListener(
-            topics = "update-payment-topic",
+            topics = "payment-events",
             containerFactory = "orderKafkaListenerContainerFactory",
             groupId = "pm")
+//    @Override
+//    public void receiveMessageFromPayment (OrderDto orderDto) {
+//        orderService.updateOrderStatus(orderDto.getId (), orderDto.getOrderStatus (),orderDto.getPaymentStatus ());
+//        }
     @Override
-    public void receiveMessageFromPayment (OrderDto orderDto) {
-        orderService.updateOrderStatus(orderDto.getId (), orderDto.getOrderStatus (),orderDto.getPaymentStatus ());
+    public void processPaymentEvent(PaymentEvent paymentEvent) {
+        if (paymentEvent.getPaymentStatus ().equals (PaymentStatus.CONFIRMED)) {
+            OrderDto orderDto = paymentEvent.getOrderDto ();
+            orderService.updateOrderStatus(orderDto.getId (), orderDto.getOrderStatus (),orderDto.getPaymentStatus ());
+        } else if (paymentEvent.getPaymentStatus ().equals (PaymentStatus.ROLLBACK)) {
+            OrderDto orderDto = paymentEvent.getOrderDto ();
+            //orderService.cancelOrder (orderDto);
         }
+    }
 }

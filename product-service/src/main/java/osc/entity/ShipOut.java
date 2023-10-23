@@ -2,6 +2,7 @@ package osc.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import osc.enums.ShipEventType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ public class ShipOut {
     private Long shipOutId;
     private LocalDateTime shipmentDate;
     private int quantity;
+    private ShipEventType shipEventType;
 
     @ManyToOne
     @JsonIgnore

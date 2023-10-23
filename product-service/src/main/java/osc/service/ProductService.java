@@ -15,4 +15,5 @@ public interface ProductService {
     ProductDto getProductByProductId(Long productId);
 
     List<ProductDto> getProductByVendorId (String vendorId);
+    public List<ProductDto> updateOrderCancel(List<ProductDto> productDtos);
 }

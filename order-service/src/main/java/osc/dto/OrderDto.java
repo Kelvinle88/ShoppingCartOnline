@@ -5,6 +5,8 @@ import osc.constant.OrderStatus;
 import osc.constant.PaymentStatus;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,17 +16,10 @@ import java.math.BigDecimal;
 @Data
 public class OrderDto {
     private Long id;
+    private LocalDate orderedDate;
     private String userId;
     private BigDecimal total;
     private OrderStatus orderStatus;
     private PaymentStatus paymentStatus;
-    //private List <Item> items;
-
-//    public OrderDto (Long id,String userId,BigDecimal total,OrderStatus orderStatus,PaymentStatus paymentStatus) {
-//        this.id = id;
-//        this.userId = userId;
-//        this.total = total;
-//        this.orderStatus = orderStatus;
-//        this.paymentStatus = paymentStatus;
-//    }
+    private List <ItemDto> items;
 }

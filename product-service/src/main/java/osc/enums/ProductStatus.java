@@ -1,4 +1,4 @@
-package osc.emun;
+package osc.enums;
 
 public enum ProductStatus {
     AVAILABLE,UNAVAILABLE

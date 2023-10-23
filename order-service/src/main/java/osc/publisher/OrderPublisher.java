@@ -6,7 +6,11 @@ import osc.dto.ProductDto;
 import java.util.List;
 
 public interface OrderPublisher {
-    void placeOrderMessage(OrderDto orderDto);
+    void createOrderToPayment(OrderDto orderDto);
+    void cancelOrderToPayment(OrderDto orderDto);
 
-    void updateProductShipOut(List <ProductDto> productDtos);
+//    void updateProductShipOut(List <ProductDto> productDtos);
+    void sendEmailOrderDetail(OrderDto orderDto);
+    public void creatOrderToProduct(List<ProductDto> productDtos);
+    public void cancelOrderToProduct(List<ProductDto> productDtos);
 }

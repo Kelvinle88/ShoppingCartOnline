@@ -1,7 +1,8 @@
 package osc.consumer;
 
-import osc.dto.OrderDto;
+import osc.events.PaymentEvent;
 
 public interface OrderConsumer {
-    void receiveMessageFromPayment(OrderDto orderDto);
+    //void receiveMessageFromPayment(OrderDto orderDto);
+    public void processPaymentEvent(PaymentEvent paymentEvent);
 }

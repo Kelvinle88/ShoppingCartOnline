@@ -3,10 +3,11 @@ package osc.service.Impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import osc.dto.ProductDto;
-import osc.emun.ProductStatus;
+import osc.enums.ProductStatus;
 import osc.entity.Product;
 import osc.entity.ShipIn;
 import osc.entity.ShipOut;
+import osc.enums.ShipEventType;
 import osc.mapper.ProductMapper;
 import osc.repository.ProductRepository;
 import osc.repository.ShipInRepository;
@@ -83,6 +84,7 @@ public class ProductServiceImpl implements ProductService {
             ShipIn shipIn = new ShipIn ();
             shipIn.setProduct (product);
             shipIn.setQuantity (quantity);
+            shipIn.setShipEventType (ShipEventType.WAREHOUSE);
             shipIn.setShipmentDate (LocalDateTime.now ());
             shipInRepository.save (shipIn);
         }
@@ -99,6 +101,7 @@ public class ProductServiceImpl implements ProductService {
             ShipOut shipOut = new ShipOut ();
             shipOut.setProduct (exist);
             shipOut.setQuantity (productDto.getQuantity ());
+            shipOut.setShipEventType (ShipEventType.ORDERED);
             shipOut.setShipmentDate (LocalDateTime.now ());
             shipOutRepository.save (shipOut);
             productRepository.save (exist);
@@ -106,6 +109,7 @@ public class ProductServiceImpl implements ProductService {
         return productDtos;
 
     }
+
     @Override
     public ProductDto getProductByProductId (Long productId) {
         Product product = productRepository.findById(productId).orElse(null);
@@ -117,5 +121,23 @@ public class ProductServiceImpl implements ProductService {
                 .stream()
                 .map(p -> productMapper.toDto ((p)))
                 .toList();
+    }
+    @Transactional
+    @Override
+    public List<ProductDto> updateOrderCancel(List<ProductDto> productDtos) {
+        for(ProductDto productDto : productDtos){
+            Product exist = productRepository.findById (productDto.getProductId ()).orElse (null);
+            int availableQuantity = exist.getAvailableQuantity () + productDto.getQuantity ();
+            exist.setAvailableQuantity (availableQuantity);
+            ShipIn shipIn = new ShipIn ();
+            shipIn.setProduct (exist);
+            shipIn.setQuantity (productDto.getQuantity ());
+            shipIn.setShipEventType (ShipEventType.CANCELED);
+            shipIn.setShipmentDate (LocalDateTime.now ());
+            shipInRepository.save (shipIn);
+            productRepository.save (exist);
+        }
+        return productDtos;
+
     }
 }

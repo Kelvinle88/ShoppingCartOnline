@@ -1,6 +1,8 @@
 package osc.service.Impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import osc.constant.OrderStatus;
@@ -12,6 +14,7 @@ import osc.entity.Order;
 import osc.mapper.OrderMapper;
 import osc.publisher.OrderPublisher;
 import osc.repository.OrderRepository;
+import osc.security.AuthHelper;
 import osc.service.OrderService;
 import osc.utilities.OrderUtilities;
 
@@ -29,6 +32,9 @@ public class OrderServiceImpl implements OrderService {
     private OrderMapper orderMapper;
     @Autowired
     private OrderPublisher orderPublisher;
+
+    @Autowired
+    private AuthHelper authHelper;
 
     @Override
     public Order saveOrder(Order order) {
@@ -57,13 +63,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Async
     public OrderDto updateOrderStatus (Long id,OrderStatus orderStatus,PaymentStatus paymentStatus) {
         Order order = orderRepository.findById (id).orElse (null);
         order.setOrderStatus (orderStatus);
         order.setPaymentStatus (paymentStatus);
         orderRepository.save (order);
         if(orderStatus.equals (OrderStatus.CONFIRMED) && paymentStatus.equals (PaymentStatus.CONFIRMED)){
-            orderPublisher.updateProductShipOut (getProductsFromOrder (order));
+            //orderPublisher.updateProductShipOut (getProductsFromOrder (order));
+            orderPublisher.creatOrderToProduct (getProductsFromOrder (order));
+            orderPublisher.sendEmailOrderDetail (orderMapper.toDto (order));
         }
         return orderMapper.toDto (order);
     }
@@ -75,7 +84,7 @@ public class OrderServiceImpl implements OrderService {
         order.setTotal(OrderUtilities.countTotalPrice(cart));
         order.setTotalQuantity (OrderUtilities.countTotalQuantity (cart));
         order.setOrderedDate(LocalDate.now());
-        order.setOrderStatus(OrderStatus.PROCESSING);
+        order.setOrderStatus(OrderStatus.CONFIRMED);
         order.setPaymentStatus (PaymentStatus.PENDING);
         return order;
     }
@@ -83,10 +92,29 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Async
     public CompletableFuture<OrderDto> requestPaymentOrder (OrderDto orderDto) {
-        orderPublisher.placeOrderMessage (orderDto);
+        orderPublisher.createOrderToPayment (orderDto);
         return CompletableFuture.completedFuture(orderDto);
-
+    }
+    public Order findOrderById(Long id){
+        return orderRepository.findById (id).orElse (null);
     }
 
+    @Override
+    public ResponseEntity <OrderDto> cancelOrder (OrderDto orderDto) {
+        Order order = orderRepository.findById (orderDto.getId ()).orElse (null);
+        order.setOrderStatus (OrderStatus.ROLLBACK);
+        order.setPaymentStatus (PaymentStatus.ROLLBACK);
+        orderRepository.save (order);
+        orderPublisher.cancelOrderToProduct (getProductsFromOrder (order));
+        orderPublisher.cancelOrderToPayment (orderDto);
 
+        return new ResponseEntity<> (orderMapper.toDto (order),HttpStatus.NO_CONTENT);
+    }
+
+    @Override
+    public List<OrderDto> getOrderByUserId () {
+        String userId = authHelper.getUserId ();
+        List<Order> orders = orderRepository.findAllByUserId (userId);
+        return orderMapper.toDtos (orders);
+    }
 }

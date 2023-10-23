@@ -2,6 +2,7 @@ package osc.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import osc.enums.ShipEventType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ public class ShipIn {
     private Long shipInId;
     private LocalDateTime shipmentDate;
     private int quantity;
+    private ShipEventType shipEventType;
 
     @ManyToOne
     @JoinColumn(name = "product_id")

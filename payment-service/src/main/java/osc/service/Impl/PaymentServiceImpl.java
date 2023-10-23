@@ -25,53 +25,81 @@ public class PaymentServiceImpl implements PaymentService {
     private PaymentRepository paymentRepository;
     @Autowired
     private PaymentPublisher paymentPublisher;
+
     @Override
-    public String checkOut(OrderDto orderDTO) throws StripeException {
+    public String checkOut (OrderDto orderDTO) throws StripeException {
         Stripe.apiKey = STRIPE_API_KEY;
         // Start by finding existing customer or creating a new one if needed
-        Customer customer = CustomerUtil.findOrCreateCustomer(orderDTO.getUserId());
+        Customer customer = CustomerUtil.findOrCreateCustomer (orderDTO.getUserId ());
 
         // Create a PaymentIntent and send its client secret to the client
-        PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
-                .setAmount((long) (orderDTO.getTotal().doubleValue() * 100L))
-                .setCurrency("usd")
-                .setCustomer(customer.getId())
-                .setAutomaticPaymentMethods(PaymentIntentCreateParams.AutomaticPaymentMethods.builder()
-                        .setEnabled(true)
-                        .build()
+        PaymentIntentCreateParams params = PaymentIntentCreateParams.builder ()
+                .setAmount ((long) (orderDTO.getTotal ().doubleValue () * 100L))
+                .setCurrency ("usd")
+                .setCustomer (customer.getId ())
+                .setAutomaticPaymentMethods (PaymentIntentCreateParams.AutomaticPaymentMethods.builder ()
+                        .setEnabled (true)
+                        .build ()
                 )
-                .build();
+                .build ();
 
         try {
-            PaymentIntent paymentIntent = PaymentIntent.create(params);
-            // Update the payment and order status based on the payment result
-           Payment payment = paymentRepository.findByOrderId(orderDTO.getId());
-            if (payment == null) {
-                payment = new Payment ();
-                payment.setPaymentId(paymentIntent.getId());
-                payment.setOrderId(orderDTO.getId());
-                payment.setStatus (PaymentStatus.PENDING);
-                // Save the new payment entity
-                paymentRepository.save(payment);
+            PaymentIntent paymentIntent = PaymentIntent.create (params);
+            Payment payment = new Payment ();
+            paymentIntent.setStatus ("succeeded");
+            if ("succeeded".equals (paymentIntent.getStatus ())) {
+                payment.setStatus (PaymentStatus.CONFIRMED);
+                payment.setPaymentId (paymentIntent.getId ());
+                payment.setOrderId (orderDTO.getId ());
+                paymentRepository.save (payment);
+                orderDTO.setOrderStatus (OrderStatus.CONFIRMED);
+                orderDTO.setPaymentStatus (PaymentStatus.CONFIRMED);
             } else {
-                //paymentIntent.setStatus ("succeeded");
-                if ("succeeded".equals(paymentIntent.getStatus())) {
-                    payment.setStatus(PaymentStatus.CONFIRMED);
-                    paymentRepository.save(payment);
-                    orderDTO.setOrderStatus(OrderStatus.CONFIRMED);
-                    orderDTO.setPaymentStatus (PaymentStatus.CONFIRMED);
-                } else {
-                    payment.setStatus(PaymentStatus.REJECTED);
-                    paymentRepository.save(payment);
-                    orderDTO.setOrderStatus(OrderStatus.PROCESSING);
-                    orderDTO.setPaymentStatus (PaymentStatus.REJECTED);
-               }
+                payment.setStatus (PaymentStatus.REJECTED);
+                payment.setPaymentId (paymentIntent.getId ());
+                payment.setOrderId (orderDTO.getId ());
+                paymentRepository.save (payment);
+                orderDTO.setOrderStatus (OrderStatus.PROCESSING);
+                orderDTO.setPaymentStatus (PaymentStatus.REJECTED);
             }
-            paymentPublisher.updateOrderPayment (orderDTO);
+            paymentPublisher.paymentConfirm (orderDTO);
             return paymentIntent.getStatus ();
         } catch (StripeException e) {
             throw e;
         }
+    }
+
+    @Override
+    public String rollBack (OrderDto orderDTO) throws StripeException {
+        Stripe.apiKey = STRIPE_API_KEY;
+        // Start by finding existing customer or creating a new one if needed
+        Customer customer = CustomerUtil.findOrCreateCustomer (orderDTO.getUserId ());
+
+        // Create a PaymentIntent and send its client secret to the client
+        PaymentIntentCreateParams params = PaymentIntentCreateParams.builder ()
+                .setAmount ((long) (-orderDTO.getTotal ().doubleValue () * 100L))
+                .setCurrency ("usd")
+                .setCustomer (customer.getId ())
+                .setAutomaticPaymentMethods (PaymentIntentCreateParams.AutomaticPaymentMethods.builder ()
+                        .setEnabled (true)
+                        .build ()
+                )
+                .build ();
+
+        try {
+            PaymentIntent paymentIntent = PaymentIntent.create (params);
+            Payment payment = paymentRepository.findByOrderId (orderDTO.getId ());
+            payment.setStatus (PaymentStatus.ROLLBACK);
+            paymentRepository.save (payment);
+            orderDTO.setOrderStatus (OrderStatus.ROLLBACK);
+            orderDTO.setPaymentStatus (PaymentStatus.ROLLBACK);
+
+           // paymentPublisher.paymentRollback (orderDTO);
+            return paymentIntent.getStatus ();
+        } catch (StripeException e) {
+            throw e;
+        }
+
     }
 
 

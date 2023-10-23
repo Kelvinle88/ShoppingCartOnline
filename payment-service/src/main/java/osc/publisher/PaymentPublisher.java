@@ -3,5 +3,6 @@ package osc.publisher;
 import osc.dto.OrderDto;
 
 public interface PaymentPublisher {
-    void updateOrderPayment (OrderDto orderDto);
+    public void paymentConfirm (OrderDto orderDto);
+    //public void paymentRollback (OrderDto orderDto);
 }

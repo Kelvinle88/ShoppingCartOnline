@@ -1,9 +1,8 @@
 package osc.consumer;
 
-import osc.dto.ProductDto;
-
-import java.util.List;
+import osc.events.OrderEvent;
 
 public interface ProductConsumer {
-    void receiveMessageFromOrder(List <ProductDto> productDtos);
+    //void receiveMessageFromOrder(List <ProductDto> productDtos);
+    public void processOrderEvent(OrderEvent orderEvent);
 }

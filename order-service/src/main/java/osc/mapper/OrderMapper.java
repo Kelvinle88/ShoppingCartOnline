@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import osc.dto.OrderDto;
 import osc.entity.Order;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class OrderMapper {
@@ -16,6 +18,11 @@ public class OrderMapper {
 
     public Order toEntity (OrderDto orderDto) {
         return modelMapper.map (orderDto,Order.class);
+    }
+    public List <OrderDto> toDtos (List <Order> orderList) {
+        return orderList.stream ()
+                .map (this::toDto)
+                .toList ();
     }
 
 }
