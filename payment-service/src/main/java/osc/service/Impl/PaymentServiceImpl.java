@@ -4,14 +4,15 @@ import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;
 import com.stripe.model.PaymentIntent;
+import com.stripe.param.PaymentIntentCancelParams;
 import com.stripe.param.PaymentIntentCreateParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import osc.dto.OrderDto;
-import osc.enums.PaymentStatus;
 import osc.entity.Payment;
 import osc.enums.OrderStatus;
+import osc.enums.PaymentStatus;
 import osc.publisher.PaymentPublisher;
 import osc.repository.PaymentRepository;
 import osc.service.PaymentService;
@@ -20,7 +21,7 @@ import osc.utils.CustomerUtil;
 @Service
 public class PaymentServiceImpl implements PaymentService {
     @Value("${stripe.key.secret}")
-    String STRIPE_API_KEY;
+    private String STRIPE_API_KEY;
     @Autowired
     private PaymentRepository paymentRepository;
     @Autowired
@@ -72,35 +73,22 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public String rollBack (OrderDto orderDTO) throws StripeException {
         Stripe.apiKey = STRIPE_API_KEY;
-        // Start by finding existing customer or creating a new one if needed
-        Customer customer = CustomerUtil.findOrCreateCustomer (orderDTO.getUserId ());
+        Payment payment = paymentRepository.findByOrderId (orderDTO.getId ());
 
-        // Create a PaymentIntent and send its client secret to the client
-        PaymentIntentCreateParams params = PaymentIntentCreateParams.builder ()
-                .setAmount ((long) (-orderDTO.getTotal ().doubleValue () * 100L))
-                .setCurrency ("usd")
-                .setCustomer (customer.getId ())
-                .setAutomaticPaymentMethods (PaymentIntentCreateParams.AutomaticPaymentMethods.builder ()
-                        .setEnabled (true)
-                        .build ()
-                )
-                .build ();
+        PaymentIntent resource = PaymentIntent.retrieve (payment.getPaymentId ());
 
-        try {
-            PaymentIntent paymentIntent = PaymentIntent.create (params);
-            Payment payment = paymentRepository.findByOrderId (orderDTO.getId ());
-            payment.setStatus (PaymentStatus.ROLLBACK);
-            paymentRepository.save (payment);
-            orderDTO.setOrderStatus (OrderStatus.ROLLBACK);
-            orderDTO.setPaymentStatus (PaymentStatus.ROLLBACK);
+        PaymentIntentCancelParams params = PaymentIntentCancelParams.builder ().build ();
 
-           // paymentPublisher.paymentRollback (orderDTO);
-            return paymentIntent.getStatus ();
-        } catch (StripeException e) {
-            throw e;
-        }
+        PaymentIntent paymentIntent = resource.cancel (params);
 
+        payment.setStatus (PaymentStatus.ROLLBACK);
+        paymentRepository.save (payment);
+        orderDTO.setOrderStatus (OrderStatus.ROLLBACK);
+        orderDTO.setPaymentStatus (PaymentStatus.ROLLBACK);
+         paymentPublisher.paymentCanceled (orderDTO);
+        return paymentIntent.getStatus ();
     }
+
 
 
 }

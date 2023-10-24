@@ -20,7 +20,7 @@ public class EmailConsumerImpl implements EmailConsumer {
     }
 
     @KafkaListener(
-            topics = "email-order-topic",
+            topics = "order-email-events",
             containerFactory = "mailKafkaListenerContainerFactory",
             groupId = "pm")
     @Override
@@ -28,7 +28,23 @@ public class EmailConsumerImpl implements EmailConsumer {
 //
         email.setTo (orderDto.getUserId ());
         email.setSubject (subject);
-        email.setBody (mailSenderService.orderDtoToTableString (orderDto));
+        email.setBody (mailSenderService.orderConfirmed (orderDto));
         mailSenderService.send (email);
     }
+//    @Override
+//    public void processOrderEvent(OrderEvent orderEvent) throws MessagingException {
+//        if (orderEvent.getEventType ().equals (EventType.ORDER_CREATED)) {
+//            OrderDto orderDto = orderEvent.getOrderDto ();
+//            email.setTo (orderDto.getUserId ());
+//            email.setSubject (subject);
+//            email.setBody (mailSenderService.orderConfirmed (orderDto));
+//            mailSenderService.send (email);
+//        } else if (orderEvent.getEventType ().equals (EventType.ORDER_CANCELED)) {
+//            OrderDto orderDto = orderEvent.getOrderDto ();
+//            email.setTo (orderDto.getUserId ());
+//            email.setSubject (subject);
+//            email.setBody (mailSenderService.orderCanceled (orderDto));
+//            mailSenderService.send (email);
+//        }
+//    }
 }

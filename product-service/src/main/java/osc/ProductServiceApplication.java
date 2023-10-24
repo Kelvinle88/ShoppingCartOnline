@@ -9,9 +9,6 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EnableFeignClients
-//@EnableJpaRepositories
-//@ImportAutoConfiguration({FeignAutoConfiguration.class})
-//@EnableDiscoveryClient
 @EnableEurekaClient
 public class ProductServiceApplication {
 

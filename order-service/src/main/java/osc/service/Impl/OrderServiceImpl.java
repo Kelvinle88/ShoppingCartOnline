@@ -70,9 +70,11 @@ public class OrderServiceImpl implements OrderService {
         order.setPaymentStatus (paymentStatus);
         orderRepository.save (order);
         if(orderStatus.equals (OrderStatus.CONFIRMED) && paymentStatus.equals (PaymentStatus.CONFIRMED)){
-            //orderPublisher.updateProductShipOut (getProductsFromOrder (order));
-            orderPublisher.creatOrderToProduct (getProductsFromOrder (order));
-            orderPublisher.sendEmailOrderDetail (orderMapper.toDto (order));
+            orderPublisher.createOrderToProduct (getProductsFromOrder (order));
+            orderPublisher.createOrderToEmail (orderMapper.toDto (order));
+        }
+        else if (orderStatus.equals (OrderStatus.ROLLBACK) && paymentStatus.equals (PaymentStatus.ROLLBACK)){
+            orderPublisher.cancelOrderToEmail (orderMapper.toDto (order));
         }
         return orderMapper.toDto (order);
     }
@@ -105,8 +107,8 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderStatus (OrderStatus.ROLLBACK);
         order.setPaymentStatus (PaymentStatus.ROLLBACK);
         orderRepository.save (order);
-        orderPublisher.cancelOrderToProduct (getProductsFromOrder (order));
         orderPublisher.cancelOrderToPayment (orderDto);
+        orderPublisher.cancelOrderToProduct (getProductsFromOrder (order));
 
         return new ResponseEntity<> (orderMapper.toDto (order),HttpStatus.NO_CONTENT);
     }

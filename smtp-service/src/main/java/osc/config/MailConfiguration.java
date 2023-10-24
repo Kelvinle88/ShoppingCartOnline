@@ -16,10 +16,10 @@ public class MailConfiguration {
     @Bean
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost(env.getProperty ("spring.mail.host"));
-        mailSender.setPort(Integer.parseInt(env.getProperty ("spring.mail.port")));
-        mailSender.setUsername(env.getProperty ("spring.mail.username"));
-        mailSender.setPassword(env.getProperty ("spring.mail.password"));
+        mailSender.setHost("smtp.gmail.com");
+        mailSender.setPort(Integer.parseInt("587"));
+        mailSender.setUsername("miu.property.portal@gmail.com");
+        mailSender.setPassword("ayus nthr eesy bykb");
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");

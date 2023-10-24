@@ -8,9 +8,8 @@ import java.util.List;
 public interface OrderPublisher {
     void createOrderToPayment(OrderDto orderDto);
     void cancelOrderToPayment(OrderDto orderDto);
-
-//    void updateProductShipOut(List <ProductDto> productDtos);
-    void sendEmailOrderDetail(OrderDto orderDto);
-    public void creatOrderToProduct(List<ProductDto> productDtos);
+    public void createOrderToEmail(OrderDto orderDto);
+    public void cancelOrderToEmail (OrderDto orderDto);
+    public void createOrderToProduct(List<ProductDto> productDtos);
     public void cancelOrderToProduct(List<ProductDto> productDtos);
 }

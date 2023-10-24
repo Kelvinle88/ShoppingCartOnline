@@ -16,7 +16,7 @@ public class OrderConsumerImpl implements OrderConsumer {
 
 
     @KafkaListener(
-            topics = "payment-events",
+            topics = "payment-order-events",
             containerFactory = "orderKafkaListenerContainerFactory",
             groupId = "pm")
 //    @Override

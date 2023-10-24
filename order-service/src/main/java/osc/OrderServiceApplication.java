@@ -12,11 +12,9 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 
 @SpringBootApplication
 @EnableEurekaClient
-//@EnableJpaRepositories
 @EnableFeignClients
 @EnableWebSecurity
 @EnableRedisHttpSession
-//@ImportAutoConfiguration({FeignAutoConfiguration.class})
 public class OrderServiceApplication {
 
     public static void main (String[] args) {

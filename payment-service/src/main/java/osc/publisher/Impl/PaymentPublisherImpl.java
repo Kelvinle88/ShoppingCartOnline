@@ -15,12 +15,13 @@ public class PaymentPublisherImpl implements PaymentPublisher {
     @Override
     public void paymentConfirm (OrderDto orderDto) {
         PaymentEvent paymentEvent = new PaymentEvent (PaymentStatus.CONFIRMED,orderDto);
+        kafkaTemplate.send("payment-order-events", paymentEvent);
+    }
+
+    @Override
+    public void paymentCanceled (OrderDto orderDto) {
+        PaymentEvent paymentEvent = new PaymentEvent (PaymentStatus.ROLLBACK,orderDto);
         kafkaTemplate.send("payment-events", paymentEvent);
     }
-//    @Override
-//    public void paymentRollback (OrderDto orderDto) {
-//        PaymentEvent paymentEvent = new PaymentEvent (PaymentStatus.ROLLBACK,orderDto);
-//        kafkaTemplate.send("payment-events", paymentEvent);
-//    }
 
 }
