@@ -88,7 +88,4 @@ public class PaymentServiceImpl implements PaymentService {
          paymentPublisher.paymentCanceled (orderDTO);
         return paymentIntent.getStatus ();
     }
-
-
-
 }

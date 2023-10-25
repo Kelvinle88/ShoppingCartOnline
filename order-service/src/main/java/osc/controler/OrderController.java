@@ -22,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @RestController
+@CrossOrigin
 @RequestMapping("/orders")
 public class OrderController {
 

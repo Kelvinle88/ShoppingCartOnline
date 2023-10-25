@@ -9,6 +9,7 @@ import osc.service.CartService;
 import java.util.List;
 //import javax.servlet.http.HttpServletRequest;
 @RestController
+@CrossOrigin
 @RequestMapping("/cart")
 public class CartController {
 
