@@ -2,6 +2,7 @@ package osc.controler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "http://127.0.0.1")
 @RequestMapping("/orders")
 public class OrderController {
 
@@ -87,6 +88,13 @@ public class OrderController {
     @GetMapping()
     public List<OrderDto> getOrderByUserId(){
         return orderService.getOrderByUserId();
+    }
+
+    @RequestMapping(method = RequestMethod.OPTIONS, value = "/reports")
+    public ResponseEntity<List<OrderDto>> getAllOrders(){
+        HttpHeaders httpHeaders = new HttpHeaders ();
+        httpHeaders.set("Access-Control-Allow-Origin","http://127.0.0.1");
+        return ResponseEntity.ok ().headers (httpHeaders).body(orderService.getAllOrders());
     }
 }
 

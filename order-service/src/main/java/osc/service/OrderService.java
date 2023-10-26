@@ -23,4 +23,6 @@ public interface OrderService {
     ResponseEntity<OrderDto> cancelOrder (OrderDto orderDto);
 
     List<OrderDto> getOrderByUserId ();
+
+    List<OrderDto> getAllOrders ();
 }

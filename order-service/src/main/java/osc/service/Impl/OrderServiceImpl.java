@@ -73,9 +73,6 @@ public class OrderServiceImpl implements OrderService {
             orderPublisher.createOrderToProduct (getProductsFromOrder (order));
             orderPublisher.createOrderToEmail (orderMapper.toDto (order));
         }
-        else if (orderStatus.equals (OrderStatus.ROLLBACK) && paymentStatus.equals (PaymentStatus.ROLLBACK)){
-            orderPublisher.cancelOrderToEmail (orderMapper.toDto (order));
-        }
         return orderMapper.toDto (order);
     }
     @Override
@@ -109,6 +106,7 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save (order);
         orderPublisher.cancelOrderToPayment (orderDto);
         orderPublisher.cancelOrderToProduct (getProductsFromOrder (order));
+        orderPublisher.cancelOrderToEmail (orderDto);
 
         return new ResponseEntity<> (orderMapper.toDto (order),HttpStatus.NO_CONTENT);
     }
@@ -118,5 +116,12 @@ public class OrderServiceImpl implements OrderService {
         String userId = authHelper.getUserId ();
         List<Order> orders = orderRepository.findAllByUserId (userId);
         return orderMapper.toDtos (orders);
+    }
+
+    @Override
+    public List <OrderDto> getAllOrders () {
+        return orderRepository.findAll ().stream()
+                .map(p -> orderMapper.toDto ((p)))
+                .toList();
     }
 }

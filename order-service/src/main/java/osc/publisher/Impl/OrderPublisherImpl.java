@@ -27,8 +27,9 @@ public class OrderPublisherImpl implements OrderPublisher {
     }
     @Override
     public void createOrderToEmail (OrderDto orderDto) {
-       // OrderEvent orderEvent = new OrderEvent(EventType.ORDER_CREATED,orderDto);
-        kafkaTemplate.send("order-email-events", orderDto);
+        OrderEvent orderEvent = new OrderEvent(EventType.ORDER_CREATED,orderDto);
+        //kafkaTemplate.send("order-email-events", orderDto);
+        kafkaTemplate.send("order-email-events", orderEvent);
     }
     @Override
     public void cancelOrderToEmail (OrderDto orderDto) {

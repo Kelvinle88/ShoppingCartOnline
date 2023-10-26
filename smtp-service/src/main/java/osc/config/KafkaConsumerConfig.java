@@ -11,7 +11,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import osc.dto.OrderDto;
+import osc.events.OrderEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,20 +42,35 @@ public class KafkaConsumerConfig {
         return factory;
     }
     @Bean
-    public ConsumerFactory<String, OrderDto> mailConsumerFactory() {
+    public ConsumerFactory<String, OrderEvent> mailConsumerFactory() {
         Map <String, Object> props = new HashMap <> ();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
 
-        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer <> (OrderDto.class));
+        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer <> (OrderEvent.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, OrderDto> mailKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, OrderDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, OrderEvent> mailKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, OrderEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(mailConsumerFactory());
         return factory;
     }
+//    @Bean
+//    public ConsumerFactory<String, OrderDto> mailConsumerFactory() {
+//        Map <String, Object> props = new HashMap <> ();
+//        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+//        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+//
+//        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer <> (OrderDto.class));
+//    }
+//
+//    @Bean
+//    public ConcurrentKafkaListenerContainerFactory<String, OrderDto> mailKafkaListenerContainerFactory() {
+//        ConcurrentKafkaListenerContainerFactory<String, OrderDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+//        factory.setConsumerFactory(mailConsumerFactory());
+//        return factory;
+//    }
 
 
 }
