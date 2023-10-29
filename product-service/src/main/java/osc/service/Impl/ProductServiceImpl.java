@@ -3,10 +3,10 @@ package osc.service.Impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import osc.dto.ProductDto;
-import osc.enums.ProductStatus;
 import osc.entity.Product;
 import osc.entity.ShipIn;
 import osc.entity.ShipOut;
+import osc.enums.ProductStatus;
 import osc.enums.ShipEventType;
 import osc.mapper.ProductMapper;
 import osc.repository.ProductRepository;
@@ -17,7 +17,7 @@ import osc.service.ProductService;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -32,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public ProductDto createProduct(Product product) {
-        product.setVendorId (authHelper.getUserId ());
+        product.setVendorId (authHelper.getEmail ());
         productRepository.save (product);
         return productMapper.toDto (product);
     }
@@ -40,7 +40,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public ProductDto updateProduct(Long productId,ProductDto productDto) {
-        String vendorId = authHelper.getUserId ();
+        String vendorId = authHelper.getEmail ();
         Product product = productRepository.findByVendorIdAndProductId(vendorId, productId);
         // Check if the product exists
         if (product == null) {
@@ -85,7 +85,7 @@ public class ProductServiceImpl implements ProductService {
             shipIn.setProduct (product);
             shipIn.setQuantity (quantity);
             shipIn.setShipEventType (ShipEventType.WAREHOUSE);
-            shipIn.setShipmentDate (LocalDateTime.now ());
+            shipIn.setShipmentDate (LocalDate.now ());
             shipInRepository.save (shipIn);
         }
 
@@ -102,7 +102,7 @@ public class ProductServiceImpl implements ProductService {
             shipOut.setProduct (exist);
             shipOut.setQuantity (productDto.getQuantity ());
             shipOut.setShipEventType (ShipEventType.ORDERED);
-            shipOut.setShipmentDate (LocalDateTime.now ());
+            shipOut.setShipmentDate (LocalDate.now ());
             shipOutRepository.save (shipOut);
             productRepository.save (exist);
         }
@@ -133,7 +133,7 @@ public class ProductServiceImpl implements ProductService {
             shipIn.setProduct (exist);
             shipIn.setQuantity (productDto.getQuantity ());
             shipIn.setShipEventType (ShipEventType.CANCELED);
-            shipIn.setShipmentDate (LocalDateTime.now ());
+            shipIn.setShipmentDate (LocalDate.now ());
             shipInRepository.save (shipIn);
             productRepository.save (exist);
         }

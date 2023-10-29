@@ -23,6 +23,7 @@
         <module>api-gateway</module>
         <module>payment-service</module>
         <module>smtp-service</module>
+<!--        <module>user-service</module>-->
     </modules>
 
     <properties>

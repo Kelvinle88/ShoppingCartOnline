@@ -1,43 +1,79 @@
-Shopping Cart Online
-Backend developer: Viet Tri, Le
+# CS490 - Project Management - Shopping Cart Online System
 
-Tools and Technologies
-Java 17
-Spring Boot - version 2.7.5
-Spring Cloud - Open Feign - version 2021.0.5
-Netflix Eureka Client/Server - version 2.1.1
-Jwt - version 0.9.1
-Redis Client : JEDIS - version 3.8.0
-Spring Data REDIS - version 2.7.0
-Spring Data JPA - version 3.1.4
-ModelMapper - version 3.1.0
-MySQL Database engine : 
-Cached Database engine : Redis 3.8.0
-Maven
+**Professor** - Somesh Rao Pullapantula
 
-Services :
-Products service 
-Orders service
-Carts service
-Discovery service: localhost:8761
-API Gateway: localhost:8889
+**Team Members**
+1.  Viet Tri, Le
+2.  Gad
+2.  Dennis
 
-Token generating for testing:
-Order-service -> security -> JwtHelper 
+## Scope
+Our team will create an Online Shopping Cart System.
+### Domain Driven Design (Essential Entities)
+- Product
+- User
+- Order
+- Cart
+- Payment
+- Report
+###  Functional  Requirements
 
-Products Service :
-- Get all products: {{api-gateway}}{{product-service}}/products
-- Get product by VendorId: {{api-gateway}}{{product-service}}/products/vendor/001
-- Get product by productId: {{api-gateway}}{{product-service}}/products/1
-- Create product: {{api-gateway}}{{product-service}}/products
-- Ship in product by Vendor: {{api-gateway}}{{product-service}}/products/1/shipin?quantity=20
-- Update product: {{api-gateway}}{{product-service}}/products/1
-- Delete product: {{api-gateway}}{{product-service}}/products/1
+#### Product Service
+- Add Product
+- Remove Product
+- Update Product along with status (AVAILABLE,UNAVAILABLE)
+- Update quantity status upon order transactional (consume Kafka message from order service).
+- Search Product
+- Ship in product quantity based on productId by Vendor
+- Ship out product quantity based on productId by Customer ordered
+- Ship out product based on range time reports.
+- Ship in product based on range time reports.
 
-Cart Service :
-- Add items to cart: {{api-gateway}}{{order-service}}/cart?productId=1&quantity=10
-- Get cart: {{api-gateway}}{{order-service}}/cart
-- Delete cart: {{api-gateway}}{{order-service}}/cart?productId=1
+#### Order - Cart Service
+- Get items from Cart(send cookies by RequestHeader)
+- Add items to Cart (send cookies by RequestHeader, params Quantity and productId)
+- Delete items from Cart(send cookies by RequestHeader, params productId)
 
-Order Service:
-- Create Order: {{api-gateway}}{{order-service}}/orders
+- Search Order (A filter search for orders based on customerId)
+- Create Order (Send Kafka message request payment to payment service).
+- Cancel Order (Send Kafka message update quantity to product service,Send Kafka message update to payment service, Send Kafka message update status to SMTP service).
+- Confirmed Order (Send Kafka message update quantity to product service,Send Kafka message update order status to SMTP service).
+- Process Payment using Stripe (recorded Stripe Dashboard Successful or Cancel)
+- Fetch/View order history
+
+#### Payment Service
+- Create payment and record on Stripe Dashboard(consume Kafka message from order service, send Kafka message update Payment status to order service )
+- Cancel payment and record on Stripe Dashboard(consume Kafka message from order service, send Kafka message update Payment status to order service )
+
+#### SMTP Service
+- Send ordered confirmation email to customer(consume Kafka message from order service)
+- Send order canceled to customer (consume Kafka message from order service)
+
+#### User Service
+- Add manager (Admin).
+
+#### Report Service
+- Add 
+
+
+### Tools & Technologies used:
+---
+* Java
+* HTML and CSS, JavaScript, TypeScript,  Angular
+* MySQL - MySQL Workbench
+* Redis
+* RESTFul API
+* Maven
+* Spring Initializer
+* Spring Security / JWT
+* Spring Boot / Spring Data / Spring Cloud
+* Microservices Stack
+* Kafka
+* Iterative Software Development Life Cycle
+* Agile - Scrum
+* StarUML
+* Stripe API
+* JavaMail
+* GitHub / Docker / Postman
+* IntelliJ / Visual Studio Code
+* MaterialUI / Angular Bootstrap

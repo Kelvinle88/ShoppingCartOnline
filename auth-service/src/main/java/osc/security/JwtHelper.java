@@ -10,7 +10,7 @@ import java.util.Map;
 
 @Component
 public class JwtHelper {
-    @Value("${jwt.secret-key:top-secret}")
+    @Value("${jwt.secret-key}")
     private String secret;
 
     @Value("${jwt.expiration:600000}")

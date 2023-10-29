@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -29,15 +28,6 @@ public class JwtHelper {
                 .signWith(SignatureAlgorithm.HS512, this.getPublicKey())
                 .compact();
     }
-
-//    public String generateRefreshToken(String email) throws NoSuchAlgorithmException, InvalidKeySpecException {
-//        return Jwts.builder()
-//                .setSubject(email)
-//                .setIssuedAt(new Date())
-//                .setExpiration(new Date(System.currentTimeMillis() + expiration * 60))
-//                .signWith(SignatureAlgorithm.HS512, this.getPublicKey())
-//                .compact();
-//    }
 public String generateRefreshToken(String email,String userId,List <String> roles) throws NoSuchAlgorithmException, InvalidKeySpecException {
     return Jwts.builder()
             .claim("email", email)
@@ -97,11 +87,19 @@ public String generateRefreshToken(String email,String userId,List <String> role
     private String getPublicKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
         return SECRET_KEY;
     }
-    public static void main (String[] args) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        List<String> roles = Arrays.asList("ADMIN");
-        String email = "leviettri88@gmail.com";
-        String userId = "001";
-        String token = new JwtHelper ().generateRefreshToken (email,userId,roles);
-        System.out.println (token);
+    public Claims getPayloadFromToken(String token) {
+        Claims result = null;
+        try {
+            result = Jwts.parser()
+                    .setSigningKey(this.getPublicKey ())
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            System.out.println(e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return result;
     }
 }

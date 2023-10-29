@@ -28,9 +28,9 @@ public class OrderConsumerImpl implements OrderConsumer {
         if (paymentEvent.getPaymentStatus ().equals (PaymentStatus.CONFIRMED)) {
             OrderDto orderDto = paymentEvent.getOrderDto ();
             orderService.updateOrderStatus(orderDto.getId (), orderDto.getOrderStatus (),orderDto.getPaymentStatus ());
-        } else if (paymentEvent.getPaymentStatus ().equals (PaymentStatus.ROLLBACK)) {
+        } else if (paymentEvent.getPaymentStatus ().equals (PaymentStatus.REJECTED)) {
             OrderDto orderDto = paymentEvent.getOrderDto ();
-            //orderService.cancelOrder (orderDto);
+            orderService.rejectOrder (orderDto);
         }
     }
 }

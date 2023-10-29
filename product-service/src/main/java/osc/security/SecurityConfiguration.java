@@ -11,8 +11,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @EnableGlobalMethodSecurity(prePostEnabled = true,
@@ -36,14 +39,24 @@ private final JwtFilter jwtFilter;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors()
-                .and()
+                .cors(corsSpec ->{
+                    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource ();
+                    CorsConfiguration config = new CorsConfiguration ();
+                    config.applyPermitDefaultValues ();
+                    config.setAllowedOrigins (Arrays.asList ("*"));
+                    config.setAllowedHeaders (Arrays.asList ("*"));
+                    config.setAllowedMethods (Arrays.asList ("POST","GET","DELETE","PUT"));
+                    config.setExposedHeaders (Arrays.asList ("content-length"));
+                    config.setMaxAge (3600L);
+                    source.registerCorsConfiguration ("/**",config);
+                    corsSpec.configurationSource (source);
+
+                })
+                //.and()
                 .csrf().disable()
                 .authorizeRequests()
                 //.antMatchers ("/products/**").permitAll ()
                 .antMatchers (HttpMethod.GET,"/products/**").permitAll()
-                //.antMatchers (HttpMethod.GET,"/products/vendor/{vendorId}").hasAnyRole ("VENDOR")
-                //.antMatchers (HttpMethod.POST,"/products/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/products/**").hasAnyRole("ADMIN", "VENDOR")
                 .antMatchers(HttpMethod.PUT,"/products/**").hasAnyRole("ADMIN", "VENDOR")
                 .antMatchers(HttpMethod.DELETE,"/products/**").hasAnyRole("ADMIN", "VENDOR")

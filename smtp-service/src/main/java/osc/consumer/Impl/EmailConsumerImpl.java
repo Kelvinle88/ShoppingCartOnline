@@ -17,7 +17,7 @@ public class EmailConsumerImpl implements EmailConsumer {
     private final MailSenderService mailSenderService;
     String subject = "Thank you for your TrustShoppingUSA purchase!";
     String subCanceled = "Your order has been cancelled";
-    Email email = new Email ();
+    Email email = new Email (); ;
     public EmailConsumerImpl (MailSenderService mailSenderService) {
         this.mailSenderService = mailSenderService;
     }

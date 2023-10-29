@@ -113,7 +113,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDto> getOrderByUserId () {
-        String userId = authHelper.getUserId ();
+        String userId = authHelper.getEmail ();
         List<Order> orders = orderRepository.findAllByUserId (userId);
         return orderMapper.toDtos (orders);
     }
@@ -123,5 +123,13 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAll ().stream()
                 .map(p -> orderMapper.toDto ((p)))
                 .toList();
+    }
+    @Override
+    public ResponseEntity <OrderDto> rejectOrder (OrderDto orderDto) {
+        Order order = orderRepository.findById (orderDto.getId ()).orElse (null);
+        order.setOrderStatus (OrderStatus.REJECTED);
+        order.setPaymentStatus (PaymentStatus.REJECTED);
+        orderRepository.save (order);
+        return new ResponseEntity<> (orderMapper.toDto (order),HttpStatus.NOT_ACCEPTABLE);
     }
 }

@@ -1,5 +1,6 @@
 package osc.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sun.istack.NotNull;
 import lombok.*;
 import osc.constant.OrderStatus;
@@ -24,6 +25,7 @@ public class Order {
 
     @Column (name = "ordered_date")
     @NotNull
+    @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDate orderedDate;
 
     @Column(name = "order_status")

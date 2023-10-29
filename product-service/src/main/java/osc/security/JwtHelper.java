@@ -103,6 +103,21 @@ public String generateToken(String email,String userId,List <String> roles) thro
     private String getPublicKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
         return SECRET_KEY;
     }
+    public Claims getPayloadFromToken(String token) {
+        Claims result = null;
+        try {
+            result = Jwts.parser()
+                    .setSigningKey(this.getPublicKey ())
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            System.out.println(e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return result;
+    }
 
     public static void main (String[] args) throws NoSuchAlgorithmException, InvalidKeySpecException {
         List<String> roles = Arrays.asList("VENDOR", "ADMIN","CUSTOMER");

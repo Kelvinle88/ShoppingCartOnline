@@ -3,6 +3,7 @@ package osc.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -10,8 +11,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @EnableGlobalMethodSecurity(prePostEnabled = true,
@@ -35,16 +39,28 @@ private final JwtFilter jwtFilter;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors()
-                .and()
+                .cors(corsSpec ->{
+                    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource ();
+                    CorsConfiguration config = new CorsConfiguration ();
+                    config.applyPermitDefaultValues ();
+                    config.setAllowedOrigins (Arrays.asList ("*"));
+                    config.setAllowedHeaders (Arrays.asList ("*"));
+                    config.setAllowedMethods (Arrays.asList ("POST","GET","DELETE","PUT"));
+                    config.setExposedHeaders (Arrays.asList ("content-length"));
+                    config.setMaxAge (3600L);
+                    source.registerCorsConfiguration ("/**",config);
+                    corsSpec.configurationSource (source);
+                })
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers ("/orders/**").permitAll ()
-                .antMatchers ("/cart/**").permitAll ()
-//                .antMatchers (HttpMethod.GET,"/orders/**").permitAll()
-//                .antMatchers(HttpMethod.POST,"/orders/**").hasAnyRole("ADMIN", "CUSTOMER")
-//                .antMatchers(HttpMethod.PUT,"/orders/**").hasAnyRole("ADMIN", "CUSTOMER")
-//                .antMatchers(HttpMethod.DELETE,"/orders/**").hasAnyRole("ADMIN", "CUSTOMER")
+                .antMatchers (HttpMethod.GET,"/orders/**").permitAll()
+                .antMatchers(HttpMethod.POST,"/orders/**").hasAnyRole("ADMIN", "CUSTOMER")
+                .antMatchers(HttpMethod.PUT,"/orders/**").hasAnyRole("ADMIN", "CUSTOMER")
+                .antMatchers(HttpMethod.DELETE,"/orders/**").hasAnyRole("ADMIN", "CUSTOMER")
+                .antMatchers (HttpMethod.GET,"/cart/**").permitAll()
+                .antMatchers(HttpMethod.POST,"/cart/**").hasAnyRole("ADMIN", "CUSTOMER")
+                .antMatchers(HttpMethod.PUT,"/cart/**").hasAnyRole("ADMIN", "CUSTOMER")
+                .antMatchers(HttpMethod.DELETE,"/cart/**").hasAnyRole("ADMIN", "CUSTOMER")
                 .anyRequest()
                 .authenticated()
                 .and()

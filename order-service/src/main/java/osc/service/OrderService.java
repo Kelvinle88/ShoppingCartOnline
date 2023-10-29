@@ -25,4 +25,5 @@ public interface OrderService {
     List<OrderDto> getOrderByUserId ();
 
     List<OrderDto> getAllOrders ();
+    public ResponseEntity <OrderDto> rejectOrder (OrderDto orderDto);
 }

@@ -20,14 +20,6 @@ public class ProductConsumerImpl implements ProductConsumer {
     @Autowired
     private ProductMapper productMapper;
 
-//    @KafkaListener(
-//            topics = "update-product-topic",
-//            containerFactory = "productKafkaListenerContainerFactory",
-//            groupId = "pm")
-//    @Override
-//    public void receiveMessageFromOrder (List <ProductDto> productDtos) {
-//        productService.updateProductShipOut(productDtos);
-//    }
     @KafkaListener(
             topics = "order-product-events",
             containerFactory = "productEventKafkaListenerContainerFactory",

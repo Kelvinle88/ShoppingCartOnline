@@ -2,8 +2,8 @@ package osc.entity;
 
 
 import lombok.Data;
-import osc.constant.Role;
-import osc.constant.UserStatus;
+import osc.enums.Role;
+import osc.enums.UserStatus;
 
 import javax.persistence.*;
 

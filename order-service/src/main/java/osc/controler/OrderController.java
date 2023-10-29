@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @RestController
-@CrossOrigin(origins = "http://127.0.0.1")
+@CrossOrigin
 @RequestMapping("/orders")
 public class OrderController {
 
@@ -55,7 +55,7 @@ public class OrderController {
     public ResponseEntity <OrderDto> checkOut(
             @RequestHeader(value = "Cookie") String cartId)
     {
-        String userId = authHelper.getUserId ();
+        String userId = authHelper.getEmail ();
         List <Item> cart = cartService.getAllItemsFromCart(cartId);
         if(cart != null && userId != null) {
             Order order = orderService.createOrder(cart, userId);

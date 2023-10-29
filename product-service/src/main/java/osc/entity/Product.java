@@ -1,10 +1,11 @@
 package osc.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -19,7 +20,8 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
     private String productType;
-    private Date dateAdded;
+    @JsonFormat(pattern="yyyy-MM-dd")
+    private LocalDate dateAdded;
     private String productName;
     private BigDecimal productPrice;
     private int category;
